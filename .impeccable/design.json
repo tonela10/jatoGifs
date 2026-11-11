@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T16:14:01.063194+00:00",
+  "title": "Design System: jatoGifs",
+  "extensions": {
+    "colorMeta": {
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface"
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Surface — dark theme"
+      },
+      "subtle": {
+        "role": "neutral",
+        "displayName": "Subtle"
+      },
+      "subtle-dark": {
+        "role": "neutral",
+        "displayName": "Subtle — dark theme"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink"
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Ink — dark theme"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted"
+      },
+      "muted-dark": {
+        "role": "neutral",
+        "displayName": "Muted — dark theme"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line"
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Line — dark theme"
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "GitHub Blue"
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "GitHub Blue — dark theme"
+      },
+      "selected": {
+        "role": "primary",
+        "displayName": "Selection Blue"
+      },
+      "selected-dark": {
+        "role": "primary",
+        "displayName": "Selection Blue — dark theme"
+      },
+      "focus": {
+        "role": "primary",
+        "displayName": "Focus Blue"
+      },
+      "focus-dark": {
+        "role": "primary",
+        "displayName": "Focus Blue — dark theme"
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "Error Red"
+      },
+      "danger-dark": {
+        "role": "semantic",
+        "displayName": "Error Red — dark theme"
+      },
+      "save": {
+        "role": "secondary",
+        "displayName": "Save Green"
+      },
+      "save-hover": {
+        "role": "secondary",
+        "displayName": "Save Green — hover"
+      },
+      "attribution": {
+        "role": "neutral",
+        "displayName": "Attribution Black"
+      },
+      "status": {
+        "role": "neutral",
+        "displayName": "Status Charcoal"
+      }
+    },
+    "typographyMeta": {
+      "body": {
+        "displayName": "System UI",
+        "purpose": "Base text and inherited form controls."
+      },
+      "title": {
+        "displayName": "Picker title",
+        "purpose": "Compact picker wordmark."
+      },
+      "settings-title": {
+        "displayName": "Settings title",
+        "purpose": "Settings and privacy headings."
+      },
+      "section-title": {
+        "displayName": "Section title",
+        "purpose": "Settings and privacy sections."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Semibold native actions."
+      },
+      "label": {
+        "displayName": "Compact label",
+        "purpose": "Header link and footer settings action."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "GIF captions and keyboard hint."
+      },
+      "code": {
+        "displayName": "Command / key",
+        "purpose": "Slash command and keyboard notation."
+      },
+      "collection-field": {
+        "displayName": "Collection field",
+        "purpose": "The manual GIF collection textarea; inherits the system UI family and line height."
+      }
+    },
+    "shadows": [
+      {
+        "name": "picker",
+        "value": "0 8px 32px rgba(0,0,0,.22)",
+        "purpose": "Outer embedded picker only."
+      }
+    ],
+    "motion": [],
+    "breakpoints": [
+      {
+        "name": "narrow-picker",
+        "value": "340px"
+      }
+    ],
+    "focus": [
+      {
+        "name": "general",
+        "value": "2px solid var(--focus); outline-offset:3px",
+        "purpose": "General keyboard focus."
+      },
+      {
+        "name": "gif",
+        "value": "3px solid var(--focus); outline-offset:1px",
+        "purpose": "Tile keyboard focus and selection."
+      }
+    ],
+    "themeBehavior": "Explicit data-theme light/dark; system dark preference applies unless explicitly light. Picker receives GitHub theme at open.",
+    "extractionNotes": "Extracted from outputs/jatoGifs/extension/ui.css, content.js, picker.html, options.html and privacy.html. No generated tonal ramps: only implemented values are documented. Component fallback values are the existing light theme; inherited semantic CSS properties provide dark theme. No config.js content read. Version 1.1.0 delta: manual collection textarea, existing save/check button variants and collection result region extracted from ui.css and options.html."
+  },
+  "components": [
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Retry, pagination, GIF checking and API-key settings utility actions.",
+      "html": "<button class=\"ds-secondary\">Cargar más</button>",
+      "css": ".ds-secondary{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;cursor:pointer;border:1px solid var(--line,#d1d9e0);border-radius:6px;padding:7px 12px;background:var(--subtle,#f6f8fa);color:var(--ink,#1f2328);font-weight:600}.ds-secondary:hover{background:var(--selected,#ddf4ff)}.ds-secondary:focus-visible{outline:2px solid var(--focus,#0969da);outline-offset:3px;}.ds-secondary:disabled{opacity:.65;cursor:wait}"
+    },
+    {
+      "name": "Save Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The implemented green collection-save action.",
+      "html": "<button class=\"ds-save\">Guardar colección</button>",
+      "css": ".ds-save{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;cursor:pointer;border:1px solid #1f883d;border-radius:6px;padding:7px 12px;background:#1f883d;color:#fff;font-weight:600}.ds-save:hover{background:#1a7f37}.ds-save:focus-visible{outline:2px solid var(--focus,#0969da);outline-offset:3px;}.ds-save:disabled{opacity:.65;cursor:wait}"
+    },
+    {
+      "name": "Text Button",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Compact footer settings action.",
+      "html": "<button class=\"ds-text\">Configuración</button>",
+      "css": ".ds-text{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;font-size:12px;font-weight:600;cursor:pointer;padding:2px;border:0;border-radius:6px;background:transparent;color:var(--accent,#0969da)}.ds-text:hover{background:var(--selected,#ddf4ff)}.ds-text:focus-visible{outline:2px solid var(--focus,#0969da);outline-offset:3px;}"
+    },
+    {
+      "name": "Close Button",
+      "kind": "button",
+      "description": "Transparent picker close action with its actual inline icon.",
+      "html": "<button class=\"ds-close\" aria-label=\"Cerrar selector\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" aria-hidden=\"true\"><path d=\"m6 6 12 12M18 6 6 18\"/></svg></button>",
+      "css": ".ds-close{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;cursor:pointer;border:0;border-radius:6px;background:transparent;color:var(--ink,#1f2328);display:grid;place-items:center;padding:7px}.ds-close:hover{background:var(--selected,#ddf4ff)}.ds-close:focus-visible{outline:2px solid var(--focus,#0969da);outline-offset:3px;}"
+    },
+    {
+      "name": "Settings Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Application-key input; this preview contains no key.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-api-key\">Clave de aplicación GIPHY</label><input class=\"ds-field\" id=\"ds-api-key\" type=\"password\" placeholder=\"Pega la API Key de jatoGifs\">",
+      "css": ".ds-field-label{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;display:block;font-weight:600;margin:22px 0 7px;color:var(--ink,#1f2328)}.ds-field{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;width:100%;padding:10px 12px;border:1px solid var(--line,#d1d9e0);border-radius:6px;background:var(--surface,#fff);color:var(--ink,#1f2328);caret-color:var(--accent,#0969da)}.ds-field:focus-visible{outline:2px solid var(--focus,#0969da);outline-offset:3px;}"
+    },
+    {
+      "name": "GIF Tile",
+      "kind": "custom",
+      "refersTo": "gif-tile",
+      "description": "Unloaded tile preview uses the implemented image-error caption state; GIF media remains external.",
+      "html": "<button class=\"ds-gif ds-image-error\" aria-label=\"GIF de tonela10\"><span class=\"ds-gif-caption\">GIF de tonela10</span></button>",
+      "css": ".ds-gif{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;cursor:pointer;padding:0;border:0;border-radius:6px;background:var(--subtle,#f6f8fa);color:var(--ink,#1f2328);height:110px;width:100%;position:relative;overflow:hidden}.ds-gif:hover{background:var(--selected,#ddf4ff)}.ds-gif img{width:100%;height:100%;object-fit:cover;display:block}.ds-gif[data-selected=\"true\"],.ds-gif:focus-visible{outline:3px solid var(--focus,#0969da);outline-offset:1px}.ds-gif-caption{position:absolute;left:0;right:0;bottom:0;padding:3px 5px;background:#161b22;color:#fff;font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:0}.ds-gif:hover .ds-gif-caption,.ds-gif:focus-visible .ds-gif-caption,.ds-gif.ds-image-error .ds-gif-caption{opacity:1}"
+    },
+    {
+      "name": "Notice",
+      "kind": "card",
+      "refersTo": "notice",
+      "description": "Supporting settings explanation.",
+      "html": "<p class=\"ds-notice\">El GIF se verá en la previsualización y al publicar. jatoGifs no envía el comentario por ti.</p>",
+      "css": ".ds-notice{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;max-width:65ch;color:var(--muted,#59636e);background:var(--subtle,#f6f8fa);padding:12px 14px;border-radius:6px}"
+    },
+    {
+      "name": "Inline Command",
+      "kind": "custom",
+      "description": "Inline slash-command and keyboard notation.",
+      "html": "<code class=\"ds-code\">/gif</code> <kbd class=\"ds-code\">Enter</kbd>",
+      "css": ".ds-code{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--subtle,#f6f8fa);color:var(--ink,#1f2328);padding:2px 4px;border-radius:3px}"
+    },
+    {
+      "name": "Manual Collection",
+      "kind": "input",
+      "refersTo": "textarea-collection",
+      "description": "Version 1.1.0 collection editor, using the existing field and action styles.",
+      "html": "<label class=\"ds-collection-label\" for=\"ds-gif-entries\">Enlaces o ID de tus GIF</label><textarea class=\"ds-collection-field\" id=\"ds-gif-entries\" rows=\"8\" spellcheck=\"false\" aria-describedby=\"ds-collection-help\" maxlength=\"40000\"></textarea><p class=\"ds-collection-help\" id=\"ds-collection-help\">Un enlace o ID por línea, hasta 100 GIF de tonela10. Se guardan solo los ID, no las imágenes ni sus URL de archivo.</p><div class=\"ds-collection-actions\"><button class=\"ds-collection-save\" type=\"button\">Guardar colección</button><button class=\"ds-collection-check\" type=\"button\">Comprobar GIF</button></div><p class=\"ds-collection-result\" role=\"status\" aria-live=\"polite\"></p>",
+      "css": ".ds-collection-label{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;display:block;font-weight:600;margin:22px 0 7px;color:var(--ink,#1f2328)}.ds-collection-field{font:13px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;width:100%;padding:10px 12px;border:1px solid var(--line,#d1d9e0);border-radius:6px;background:var(--surface,#fff);color:var(--ink,#1f2328);caret-color:var(--accent,#0969da);resize:vertical;min-height:150px;overflow-wrap:anywhere}.ds-collection-field:focus-visible{outline:2px solid var(--focus,#0969da);outline-offset:3px}.ds-collection-help{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;max-width:65ch;color:var(--muted,#59636e)}.ds-collection-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.ds-collection-save,.ds-collection-check{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;cursor:pointer;border:1px solid var(--line,#d1d9e0);border-radius:6px;padding:7px 12px;background:var(--subtle,#f6f8fa);color:var(--ink,#1f2328);font-weight:600}.ds-collection-check:hover{background:var(--selected,#ddf4ff)}.ds-collection-save{background:#1f883d;color:#fff;border-color:#1f883d}.ds-collection-save:hover{background:#1a7f37}.ds-collection-save:focus-visible,.ds-collection-check:focus-visible{outline:2px solid var(--focus,#0969da);outline-offset:3px}.ds-collection-save:disabled,.ds-collection-check:disabled{opacity:.65;cursor:wait}.ds-collection-result{font:14px/1.5 -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;min-height:24px;color:var(--ink,#1f2328)}.ds-collection-result[data-error=\"true\"]{color:var(--danger,#b42318)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "",
+    "overview": "The approved direction is a compact, Spanish, GitHub-native interface. System typography, familiar blue accents and light/dark surfaces keep attention on choosing a GIF and returning to the conversation editor. This document records the implemented extension rather than proposing a new visual identity.\n\nThe gallery is dense and practical. GIF imagery supplies the visual variety; framing, labels and controls remain restrained. Settings and privacy reuse the same palette and type system in a wider reading layout.",
+    "keyCharacteristics": [
+      "Compact Spanish controls and status copy.",
+      "System fonts and GitHub-compatible light/dark themes.",
+      "Three-column GIF gallery with a narrow-width fallback.",
+      "Visible keyboard focus, selection outlines and attribution."
+    ],
+    "rules": [],
+    "dos": [
+      "**Do** preserve the compact Spanish interface and exact jatoGifs name.",
+      "**Do** apply light/dark values through the existing semantic surface, ink, line, accent and focus roles.",
+      "**Do** keep keyboard focus and selection clearly visible and maintain live status announcements.",
+      "**Do** preserve the official GIPHY attribution and the channel link.",
+      "**Do** use the existing system font and restrained outer-picker shadow."
+    ],
+    "donts": [
+      "**Don't** add a new palette, font, decorative motif or animation while extending this documented interface.",
+      "**Don't** remove the narrow-width grid fallback or replace cropped GIF tiles with a different gallery model without a new approved direction.",
+      "**Don't** hide captions from keyboard focus or remove the visible focus treatment.",
+      "**Don't** treat a GIF choice as permission to submit the user's GitHub comment."
+    ]
+  }
+}

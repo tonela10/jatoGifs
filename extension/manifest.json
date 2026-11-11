@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "jatoGifs",
+  "version": "1.1.1",
+  "description": "Escribe /gif en GitHub y elige un GIF de tu colección.",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.giphy.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Configurar jatoGifs",
+    "default_popup": "options.html"
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://github.com/*"
+      ],
+      "js": [
+        "core.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "picker.html",
+        "picker.js",
+        "ui.css",
+        "assets/powered-by-giphy.png"
+      ],
+      "matches": [
+        "https://github.com/*"
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src https://api.giphy.com; img-src 'self' https://*.giphy.com; style-src 'self'; base-uri 'none'; form-action 'none'"
+  }
+}

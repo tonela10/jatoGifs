@@ -1,0 +1,8 @@
+{
+  "name": "jatogifs",
+  "version": "1.1.1",
+  "private": true,
+  "description": "GIF de tonela10 en los editores de GitHub",
+  "scripts": { "test": "node --test tests/*.test.cjs", "package": "python3 scripts/package.py" },
+  "engines": { "node": ">=20" }
+}
