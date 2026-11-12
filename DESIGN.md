@@ -181,17 +181,17 @@ Controls, fields, notices and GIF tiles use the control radius. The outer picker
 
 ### Buttons
 
-Secondary buttons use subtle surface, ink text and a line border. Hover uses the selected surface. The “Guardar colección” action uses Save Green and white text, including in dark mode. “Comprobar GIF” and “Guardar clave” use the secondary variant. Disabled buttons retain their layout and reduce opacity to (.65), with a waiting cursor.
+Secondary buttons use subtle surface, ink text and a line border. Hover uses the selected surface. “Comprobar catálogo” uses the secondary variant. Disabled buttons retain their layout and reduce opacity to (.65). A GIF that fails both image loads uses the disabled variant and is skipped by keyboard navigation.
 
 The close button is transparent and borderless with (7px) padding and the implemented (20px) inline cross icon. The settings text action is a compact borderless accent control; both transparent variants retain the shared selected-surface hover behavior.
 
 ### Inputs / Fields
 
-The full-width settings field uses the surface, ink, line border and control radius. Its caret uses the accent. Labels are block-level semibold text with margin (22px 0 7px). Error status text uses danger. The API-key and collection result regions each keep a minimum height of (24px), use ink normally and danger for errors, and announce updates through polite live status.
+The full-width settings field uses the surface, ink, line border and control radius. Its caret uses the accent. Labels are block-level semibold text with margin (22px 0 7px). Error status text uses danger. The collection result keeps a minimum height of (24px), uses ink normally and danger for errors, and announces updates through polite live status.
 
-### Manual Collection
+### Shared Catalogue
 
-In version 1.1.0, “Tu colección” precedes API-key settings. Its full-width textarea accepts one GIPHY page URL or ID per line, has eight initial rows, maximum length (40000), minimum height (150px), vertical resizing and overflow wrapping. It reuses the field surface, border, radius, padding, caret and focus treatment; only its type size is reduced to the collection-field role. The semibold label “Enlaces o ID de tus GIF” and linked help text explain the (100 GIF) limit. “Guardar colección” and “Comprobar GIF” share the existing wrapping action row, followed by the collection result region. No palette, layout or elevation changes accompany this control.
+Settings links to the public site and checks the catalogue connection and entry count. There is no credential form. A read-only textarea displays links from the previous local list only when that list exists.
 
 ### GIF Gallery
 
