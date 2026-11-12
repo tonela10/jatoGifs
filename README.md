@@ -13,7 +13,7 @@ El ZIP no contiene una clave de GIPHY. Si todavía no tienes una guardada, añá
 
 ## Añadir un GIF
 
-1. Abre [el panel de jatoGifs](https://jato.sediles.dev/admin) e inicia sesión con la cuenta autorizada de Cloudflare Access.
+1. Abre [jato.sediles.dev](https://jato.sediles.dev/). Cualquiera puede añadir un GIF sin iniciar sesión; solo el propietario puede quitar GIF desde el panel de administración.
 2. Pega el enlace de un GIF de GIPHY o su ID y pulsa **Añadir GIF**.
 3. Cierra y vuelve a abrir `/gif` en GitHub. No tienes que actualizar la extensión cada vez que cambie la colección.
 

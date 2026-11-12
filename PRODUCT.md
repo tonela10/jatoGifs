@@ -15,7 +15,7 @@ GitHub users composing issues, pull requests, reviews and discussions who want t
 Type /gif, choose a GIF, and insert image Markdown without losing the draft or submitting it.
 
 ## Capabilities and Constraints
-Only github.com conversation editors. The catalogue is curated in a protected web panel at jato.sediles.dev; Cloudflare D1 stores only GIPHY IDs. The extension reads the current public list when the picker opens and fetches GIF data directly from GIPHY. No baked-in GIF catalogue, media files or media URLs. The initial database migration preserves the nine GIFs from 1.1.1. Manual browser installation; no paid service setup.
+Only github.com conversation editors. Anyone can submit GIPHY IDs at jato.sediles.dev; only the owner can remove entries; Cloudflare D1 stores only GIPHY IDs. The extension reads the current public list when the picker opens and fetches GIF data directly from GIPHY. No baked-in GIF catalogue, media files or media URLs. The initial database migration preserves the nine GIFs from 1.1.1. Manual browser installation; no paid service setup.
 
 ## Brand Commitments
 Exact name: jatoGifs. Spanish interface. Compact, accessible gallery that fits GitHub light and dark themes, as approved in the plan.

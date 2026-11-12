@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "jatoGifs",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Escribe /gif en GitHub y elige un GIF de tu colecci\u00f3n.",
   "minimum_chrome_version": "120",
   "permissions": [

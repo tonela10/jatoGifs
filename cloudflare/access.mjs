@@ -5,10 +5,21 @@ function decode(segment) {
   return Uint8Array.from(atob(segment.replaceAll('-', '+').replaceAll('_', '/')), c => c.charCodeAt(0));
 }
 
-export async function isAdmin(request, env, fetcher = fetch) {
+export async function isAdmin(request, env, fetcher = globalThis.fetch.bind(globalThis), ctx) {
+  if (!env.ACCESS_AUD || !env.ADMIN_EMAIL) return false;
+  if (ctx?.access?.aud === env.ACCESS_AUD) {
+    try {
+      const identity = await ctx.access.getIdentity();
+      if (typeof identity?.email === 'string') {
+        return identity.email.toLowerCase() === env.ADMIN_EMAIL.toLowerCase();
+      }
+    } catch {
+      // Verify the application token if the runtime cannot supply the identity.
+    }
+  }
   const token = request.headers.get('Cf-Access-Jwt-Assertion');
   const issuer = env.ACCESS_ISSUER;
-  if (!token || token.length > 8192 || !env.ACCESS_AUD || !env.ADMIN_EMAIL ||
+  if (!token || token.length > 8192 ||
       !/^https:\/\/[a-z0-9-]+\.cloudflareaccess\.com$/.test(issuer || '')) return false;
   try {
     const parts = token.split('.');
@@ -23,7 +34,7 @@ export async function isAdmin(request, env, fetcher = fetch) {
         !claim.aud.includes(env.ACCESS_AUD) || !Number.isFinite(claim.exp) || claim.exp <= now ||
         (claim.nbf !== undefined && (!Number.isFinite(claim.nbf) || claim.nbf > now)) ||
         typeof claim.email !== 'string' || claim.email.toLowerCase() !== env.ADMIN_EMAIL.toLowerCase()) return false;
-    const response = await fetcher(issuer + '/cdn-cgi/access/certs', { redirect: 'error', signal: AbortSignal.timeout(5000) });
+    const response = await fetcher(issuer + '/cdn-cgi/access/certs', { redirect: 'manual', signal: AbortSignal.timeout(5000) });
     if (!response.ok) return false;
     const { keys } = await response.json();
     const jwk = keys?.find(key => key.kid === header.kid && key.kty === 'RSA');
