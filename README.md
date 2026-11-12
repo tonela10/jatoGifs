@@ -4,14 +4,12 @@
 <h1 align="center">jatoGifs</h1>
 <p align="center"><strong>El GIF justo para tu próxima review en GitHub.</strong></p>
 <p align="center">
-  <a href="https://github.com/tonela10/jatoGifs/releases/download/v1.2.1/jatoGifs-1.2.1.zip"><strong>Descargar ZIP · v1.2.1</strong></a>
-  &nbsp;·&nbsp;
-  <a href="https://github.com/tonela10/jatoGifs/releases/tag/v1.2.1">Ver release v1.2.1</a>
+  <a href="https://github.com/tonela10/jatoGifs/releases/latest"><strong>Descargar la última versión</strong></a>
   &nbsp;·&nbsp;
   <a href="https://jato.sediles.dev/">Añadir un GIF</a>
 </p>
 
-Escribe `/gif` en un comentario de GitHub y elige un GIF sin salir del editor. jatoGifs lo inserta como imagen Markdown en tu borrador, listo para previsualizar.
+Escribe `/gif` en un comentario de GitHub y elige un GIF sin salir del editor. jatoGifs lo inserta como imagen Markdown en tu borrador, listo para previsualizar. Desde la **1.3.0** no necesitas cuenta de GIPHY, clave ni token.
 
 <p align="center">
   <img src="docs/capturas/selector.png" width="760" alt="Selector de jatoGifs en modo oscuro, abierto al escribir /gif y con miniaturas del catálogo">
@@ -21,15 +19,20 @@ Escribe `/gif` en un comentario de GitHub y elige un GIF sin salir del editor. j
 
 ## Instala jatoGifs en Brave o Chrome
 
-1. Descarga y descomprime [`jatoGifs-1.2.1.zip`](https://github.com/tonela10/jatoGifs/releases/download/v1.2.1/jatoGifs-1.2.1.zip).
+1. Descarga el ZIP instalable de la [última release](https://github.com/tonela10/jatoGifs/releases/latest) y descomprímelo. Usa la 1.3.0 o posterior para instalar sin clave.
 2. Abre `brave://extensions` o `chrome://extensions` y activa **Modo desarrollador**.
 3. Pulsa **Cargar descomprimida** y elige la carpeta que contiene `manifest.json`.
-4. Entra con tu cuenta en el [panel de GIPHY Developers](https://developers.giphy.com/dashboard/), crea una clave de tipo **API** y pégala en **Configuración → Conectar GIPHY**. Pulsa **Guardar clave** y luego **Comprobar GIF**.
-5. Recarga las pestañas de GitHub que ya tenías abiertas.
+4. Recarga las pestañas de GitHub que ya tenías abiertas y escribe `/gif`.
 
-**Para compartirlo con otra persona:** pásale el ZIP o dale acceso a la release privada. Cada persona usa su propia clave de GIPHY, pero todas consultan el mismo catálogo de jatoGifs. La clave se guarda en su navegador y sirve para cargar los GIF del catálogo.
+Si ya tienes jatoGifs, actualiza los archivos de la carpeta instalada, elimina el antiguo `config.js` si queda en esa carpeta y pulsa **Recargar**. La extensión borra la clave guardada en el navegador y conserva tu antigua lista local. La [1.2.1](https://github.com/tonela10/jatoGifs/releases/tag/v1.2.1) sigue requiriendo una clave.
 
-> Si ya tienes jatoGifs, puedes actualizar los archivos en su carpeta instalada y pulsar **Recargar** en el navegador. El ZIP no incluye una clave de GIPHY.
+**Para compartirlo:** pasa el ZIP a la otra persona o dale acceso a la release del repositorio privado. Verá el mismo catálogo sin configurar GIPHY.
+
+<p align="center">
+  <img src="docs/capturas/configuracion.png" width="680" alt="Configuración de jatoGifs sin campos de credenciales, con Añadir GIF en la web y Comprobar catálogo">
+  <br>
+  <sub>Comprobar catálogo verifica la conexión y el número de entradas.</sub>
+</p>
 
 ## De `/gif` a tu borrador
 
@@ -59,7 +62,7 @@ Cualquiera puede añadir GIF; solo el propietario puede quitar entradas. Si vien
 
 ## Cómo funciona
 
-La extensión usa Manifest V3 y consulta [el catálogo público](https://jato.sediles.dev/api/catalog) al abrir el selector. Cloudflare Workers sirve el formulario y Cloudflare D1 guarda solo los ID. La extensión obtiene las imágenes directamente de GIPHY; tu borrador se queda en el navegador.
+La extensión usa Manifest V3 y consulta [el catálogo público](https://jato.sediles.dev/api/catalog) al abrir el selector. Cloudflare Workers sirve el formulario y Cloudflare D1 guarda solo los ID. La extensión construye los enlaces públicos a partir de los ID y el navegador carga las imágenes directamente de GIPHY. No se consulta la API de GIPHY ni se envía tu borrador.
 
 ## Desarrollo
 
@@ -68,7 +71,7 @@ Carga `extension/` como extensión descomprimida. Usa Node.js 22 o posterior par
 ```sh
 npm test                # Extensión
 npm run test:cloudflare # Worker, Access y SQLite en memoria
-npm run package         # ZIP instalable y código fuente sin claves
+npm run package         # ZIP instalable y código fuente sin credenciales
 ```
 
 [Desplegar en Cloudflare](cloudflare/README.md) · [Pruebas y verificaciones](VERIFICACION.md) · [Privacidad](extension/privacy.html) · [Última release](https://github.com/tonela10/jatoGifs/releases/latest) · [Todas las versiones](https://github.com/tonela10/jatoGifs/releases)

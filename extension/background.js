@@ -1,6 +1,6 @@
 'use strict';
-importScripts('config.js', 'catalog.js', 'giphy.js', 'core.js');
-// The GIPHY key is stored locally; the catalogue lives on the server.
+importScripts('catalog.js');
+// Legacy local lists remain available in options.
 chrome.storage.local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
 // A picker session keeps its catalogue IDs stable across pages and worker suspension.
@@ -13,10 +13,10 @@ const pickerUrl = chrome.runtime.getURL('picker.html');
 const optionsUrl = chrome.runtime.getURL('options.html');
 const failure = (code, message) => ({ ok: false, error: { code, message } });
 
-async function key() {
-  const saved = await chrome.storage.local.get('apiKey');
-  return saved.apiKey || self.JATO_CONFIG.apiKey;
-}
+// Reloading an unpacked extension does not always emit an update event.
+void chrome.storage.local.remove('apiKey').catch(() => {
+  console.warn('No se pudo borrar la antigua clave local de jatoGifs.');
+});
 
 chrome.runtime.onMessage.addListener((message, sender, reply) => {
   const isPicker = sender.url?.split('#')[0] === pickerUrl;
@@ -44,17 +44,15 @@ chrome.runtime.onMessage.addListener((message, sender, reply) => {
         if (ids === null) return failure('SESSION', 'Cierra y vuelve a escribir /gif para actualizar el catálogo.');
         if (!(await getSession(message.session))) return failure('SESSION', 'El selector se ha cerrado.');
         if (entry.ids === undefined) await chrome.storage.session.set({ [sessionKey(message.session)]: { ...entry, ids } });
-        const page = await JatoGiphy.fetchPage(await key(), message.offset, fetch, ids);
-        if (!(await getSession(message.session))) return failure('SESSION', 'El selector se ha cerrado.');
-        return { ok: true, ...page };
+        return { ok: true, ...JatoCatalog.page(ids, message.offset) };
       } finally { inFlight.delete(message.session); }
     }
     if (message.type === 'SELECT' && isPicker) {
       const entry = await getSession(message.session);
-      const gif = message.gif;
       if (!entry || entry.tabId !== sender.tab?.id) return failure('SESSION', 'El editor ya no está disponible. Abre el selector de nuevo.');
-      if (!gif || !JatoCore.safeMediaUrl(gif.url) || typeof gif.title !== 'string') return failure('SERVICE', 'El GIF no tiene una URL válida.');
-      await chrome.tabs.sendMessage(entry.tabId, { type: 'SELECT', session: message.session, gif: { title: gif.title, url: gif.url } }, { frameId: 0 });
+      if (!entry.ids?.includes(message.id)) return failure('GIF', 'Ese GIF no pertenece al catálogo abierto.');
+      const { url } = JatoCatalog.media(message.id);
+      await chrome.tabs.sendMessage(entry.tabId, { type: 'SELECT', session: message.session, gif: { title: 'GIF de GIPHY', url } }, { frameId: 0 });
       await removeSession(message.session);
       return { ok: true };
     }
@@ -69,8 +67,7 @@ chrome.runtime.onMessage.addListener((message, sender, reply) => {
     if (message.type === 'OPTIONS' && isPicker) { await chrome.runtime.openOptionsPage(); return { ok: true }; }
     if (message.type === 'CHECK' && isOptions) {
       const ids = await JatoCatalog.load();
-      const page = await JatoGiphy.fetchByIds(await key(), ids);
-      return { ok: true, count: page.items.length, requested: ids.length, missingIds: page.missingIds };
+      return { ok: true, count: ids.length };
     }
     return failure('DENIED', 'Acción no permitida.');
   })().then(reply, error => reply(failure(error.code || 'SERVICE', error.code ? error.message : 'No se pudo completar la acción. Cierra y vuelve a abrir el selector.')));

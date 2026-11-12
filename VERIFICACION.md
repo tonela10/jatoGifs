@@ -1,5 +1,13 @@
 # Verificación de jatoGifs
 
+## Versión 1.3.0 · 12 de noviembre de 2026
+
+- Pasan 20 pruebas automatizadas de la extensión y del Worker. El contrato del catálogo y el código del Worker no cambian.
+- En perfiles limpios de Brave 157.0.8103.39 y Chrome for Testing 157.0.8103.78, los nueve GIF reales cargaron sin clave. Se insertó un GIF y se mostró su imagen original en el editor de demostración. El renderizador de Markdown de GitHub también reconoció la imagen; no se publicó ningún comentario.
+- Las pruebas de integración cubren teclado, paginación, catálogo vacío, fallo de conexión, recuperación de miniatura, imagen no disponible y alta desde el formulario real del Worker con SQLite en memoria. Al volver a abrir el selector aparece el alta.
+- En ambos navegadores, la actualización descomprimida desde el ZIP 1.2.1 conservó la identidad y la antigua lista local, y eliminó únicamente la clave ficticia de prueba al pulsar Recargar.
+- Los dos paquetes excluyen el antiguo archivo de configuración; la extensión empaquetada no concede permiso ni hace peticiones a la API de GIPHY.
+
 ## Versión 1.2.1 · 12 de noviembre de 2026
 
 - Pasan 26 pruebas automatizadas. Se comprueban las altas en SQLite, duplicados, límites de solicitudes, el tope de 100 GIF y que solo el propietario puede quitar entradas.

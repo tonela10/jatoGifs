@@ -31,3 +31,20 @@ test('caps the catalogue at 100 IDs', () => {
   assert.equal(validate(Array.from({length:100}, (_,i) => `id${i}`)).length,100);
   assert.throws(() => validate(Array.from({length:101}, (_,i) => `id${i}`)), /100/);
 });
+
+test('derives credential-free media URLs from validated IDs and paginates in order', () => {
+  const { media, page } = require('../extension/catalog.js');
+  assert.deepEqual(media('G123'), {
+    id:'G123',
+    preview:'https://media.giphy.com/media/G123/200w.gif',
+    url:'https://media.giphy.com/media/G123/giphy.gif',
+  });
+  for (const invalid of ['../one', 'one?key=a', 'one/two', '', 123]) assert.throws(() => media(invalid));
+  const ids = Array.from({length:26}, (_, i) => `g${i}`);
+  assert.deepEqual(page(ids, 0).items.map(item => item.id), ids.slice(0, 25));
+  assert.equal(page(ids, 0).nextOffset, 25);
+  assert.equal(page(ids, 0).hasMore, true);
+  assert.deepEqual(page(ids, 25), { items:[media('g25')], nextOffset:26, hasMore:false });
+  assert.deepEqual(page([], 0), { items:[], nextOffset:0, hasMore:false });
+  for (const offset of [-1, 0.5, 27, null]) assert.throws(() => page(ids, offset), {code:'OFFSET'});
+});

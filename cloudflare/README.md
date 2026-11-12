@@ -9,7 +9,7 @@ El Worker `jatogifs-catalog` sirve `jato.sediles.dev`. Guarda en D1 únicamente 
 | `/manage` | Cloudflare Access | Quitar GIF |
 | `/api/catalog` | Lectura pública | Devuelve `{"version":1,"ids":[...]}` |
 
-La extensión lee una lista nueva cada vez que abres el selector. Los IDs de la lista se conservan en memoria de sesión para mantener estables las páginas de un selector ya abierto. Ni el Worker ni D1 necesitan la clave de GIPHY; el navegador consulta a GIPHY con la que se haya guardado en la extensión. El formulario público valida el formato y comprueba que GIPHY permita incrustar el GIF. Se limitan los intentos por dirección IP sin guardarla en D1. La extensión indica si la API de GIPHY no devuelve alguno.
+La extensión lee una lista nueva cada vez que abres el selector. Los IDs de la lista se conservan en memoria de sesión para mantener estables las páginas de un selector ya abierto. El Worker y D1 no necesitan la clave de GIPHY. Desde la extensión 1.3.0 el navegador carga los enlaces públicos de imagen; la 1.2.1 sigue siendo compatible con el catálogo y usa la clave de esa instalación. El formulario público valida el formato y comprueba que GIPHY permita incrustar el GIF. Se limitan los intentos por dirección IP sin guardarla en D1. La extensión marca el GIF como no disponible si fallan la miniatura y la imagen original.
 
 ## Despliegue
 

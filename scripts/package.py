@@ -1,28 +1,29 @@
-"""Produce install and source ZIPs without the local GIPHY key."""
+"""Produce install and source ZIPs, excluding any obsolete local config.js."""
 from pathlib import Path
 import json
 import zipfile
 
 root = Path(__file__).resolve().parents[1]
-manifest = json.loads((root / "extension/manifest.json").read_text())
-version = manifest["version"]
+extension = root / "extension"
+version = json.loads((extension / "manifest.json").read_text())["version"]
 destination = root.parent
-local_config = root / "extension/config.js"
-empty_config = b"// Set your GIPHY key in the extension options.\nself.JATO_CONFIG = Object.freeze({ apiKey: '' });\n"
+ignored = {".git", "node_modules", "__pycache__", ".DS_Store"}
 
-def add_file(archive, file, name):
-    if file == local_config:
-        archive.writestr(str(name), empty_config)
-    else:
-        archive.write(file, name)
+
+def included(file):
+    relative = file.relative_to(root)
+    return (file.is_file()
+            and not ignored.intersection(relative.parts)
+            and not any(part == ".env" or part.startswith(".env.") for part in relative.parts)
+            and relative != Path("extension/config.js"))
+
 
 with zipfile.ZipFile(destination / f"jatoGifs-{version}.zip", "w", zipfile.ZIP_DEFLATED) as archive:
-    for file in sorted((root / "extension").rglob("*")):
-        if file.is_file() and file.name != ".DS_Store":
-            add_file(archive, file, file.relative_to(root / "extension"))
+    for file in sorted(extension.rglob("*")):
+        if included(file):
+            archive.write(file, file.relative_to(extension))
 with zipfile.ZipFile(destination / f"jatoGifs-{version}-codigo.zip", "w", zipfile.ZIP_DEFLATED) as archive:
     for file in sorted(root.rglob("*")):
-        relative = file.relative_to(root)
-        if file.is_file() and not any(p in {".git", "node_modules", "__pycache__", ".DS_Store"} for p in relative.parts):
-            add_file(archive, file, Path("jatoGifs") / relative)
+        if included(file):
+            archive.write(file, Path("jatoGifs") / file.relative_to(root))
 print(f"Created jatoGifs-{version}.zip and jatoGifs-{version}-codigo.zip")
