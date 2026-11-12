@@ -1,5 +1,18 @@
 # Verificación de jatoGifs
 
+## Versión 1.2.1 · 12 de noviembre de 2026
+
+- Pasan 26 pruebas automatizadas. Se comprueban las altas en SQLite, duplicados, límites de solicitudes, el tope de 100 GIF y que solo el propietario puede quitar entradas.
+- En producción, Brave sin sesión abrió el formulario público por la URL antigua y la web rechazó un duplicado y un ID no verificable sin cambiar los nueve GIF. La ruta de administración redirige a Cloudflare Access.
+- Brave muestra la extensión instalada 1.2.1 habilitada. Su opción «Comprobar GIF» confirmó los nueve GIF de Cloudflare y GIPHY.
+
+## Versión 1.2.0 · 12 de noviembre de 2026
+
+- Pasan 23 pruebas automatizadas: la extensión, el Worker con SQLite en memoria y la verificación criptográfica de tokens de Cloudflare Access.
+- En Brave aislado, el selector conserva las páginas de la lista abierta y usa los cambios del catálogo en la siguiente apertura.
+- Con Cloudflare y GIPHY reales, Brave cargó nueve GIF e insertó uno como Markdown en un editor sintético. No se publicó ningún comentario.
+- En producción, el catálogo devuelve nueve IDs sin sesión, el panel redirige a Access y una solicitud de escritura sin sesión no modifica la base. El flujo de escritura con sesión se comprobó en la prueba local.
+
 ## Versión 1.1.1 · 11 de noviembre de 2026
 
 - 21 pruebas unitarias pasan. La colección inicial incluye el GIF `o5usW6VUC2TkUrC42m`; solo se acepta ese ID del usuario `perekng`.

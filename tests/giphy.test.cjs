@@ -33,7 +33,7 @@ test('rejects missing key, malformed IDs and invalid offsets before requesting',
   const never=()=>{throw Error('must not request');};
   await assert.rejects(fetchByIds('', ['one'], never), {code:'NOT_CONFIGURED'});
   for (const ids of [['one','one'],['../bad'],new Array(101).fill('one'),'one']) await assert.rejects(fetchByIds('key',ids,never),{code:'IDS'});
-  for (const offset of [-1,1.5,'25',5000]) await assert.rejects(fetchPage('key',offset,never),{code:'OFFSET'});
+  for (const offset of [-1,1.5,'25',5000]) await assert.rejects(fetchPage('key',offset,never,['one']),{code:'OFFSET'});
 });
 test('handles invalid key, rate limit, service failure and offline', async () => {
   for (const [status,code] of [[401,'KEY'],[403,'KEY'],[429,'RATE_LIMIT'],[503,'SERVICE']]) await assert.rejects(fetchByIds('key',['one'],async()=>({ok:false,status})),{code});
@@ -43,19 +43,16 @@ test('rejects synthetic success and malformed JSON', async () => {
   await assert.rejects(fetchByIds('key',['one'],async()=>({ok:true,json:async()=>({meta:{status:200,response_id:''},data:[]})})),{code:'SERVICE'});
   await assert.rejects(fetchByIds('key',['one'],async()=>({ok:true,json:async()=>{throw Error('invalid');}})),{code:'SERVICE'});
 });
-test('rejects unexpected IDs, duplicate results, another channel and unsafe media', async () => {
+test('rejects unexpected IDs, duplicate results and unsafe media', async () => {
   await assert.rejects(fetchByIds('key',['one'],async()=>response([item('other')])),{code:'SERVICE'});
   await assert.rejects(fetchByIds('key',['one'],async()=>response([item(),item()])),{code:'SERVICE'});
-  await assert.rejects(fetchByIds('key',['one'],async()=>response([item('one','other')])),{code:'CHANNEL'});
   const unsafe=item(); unsafe.images.original.url='https://evil.test/a.gif';
   await assert.rejects(fetchByIds('key',['one'],async()=>response([unsafe])),{code:'SERVICE'});
 });
-test('allows the selected external ID with its verified author, not the whole channel', async () => {
-  const id = 'o5usW6VUC2TkUrC42m';
-  const selected = { ...item(id, 'perekng'), title: '' };
-  const result = await fetchByIds('key', ['one', id], async () => response([item(), selected]));
-  assert.equal(result.items[1].title, 'Test production testing');
-  assert.equal(result.items[1].username, 'perekng');
-  await assert.rejects(fetchByIds('key', [id], async () => response([item(id, 'other')])), {code:'CHANNEL'});
-  await assert.rejects(fetchByIds('key', ['one'], async () => response([item('one', 'perekng')])), {code:'CHANNEL'});
+test('accepts any author only when the ID is in the requested catalogue', async () => {
+  const chosen = { ...item('curated', 'another-author'), title: '' };
+  const result = await fetchByIds('key', ['one', 'curated'], async () => response([item(), chosen]));
+  assert.equal(result.items[1].title, 'GIF de GIPHY');
+  assert.equal(result.items[1].username, 'another-author');
+  await assert.rejects(fetchByIds('key', ['one'], async () => response([chosen])), {code:'SERVICE'});
 });

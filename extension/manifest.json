@@ -1,14 +1,15 @@
 {
   "manifest_version": 3,
   "name": "jatoGifs",
-  "version": "1.1.1",
-  "description": "Escribe /gif en GitHub y elige un GIF de tu colección.",
+  "version": "1.2.1",
+  "description": "Escribe /gif en GitHub y elige un GIF de tu colecci\u00f3n.",
   "minimum_chrome_version": "120",
   "permissions": [
     "storage"
   ],
   "host_permissions": [
-    "https://api.giphy.com/*"
+    "https://api.giphy.com/*",
+    "https://jato.sediles.dev/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -50,6 +51,6 @@
     }
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'none'; connect-src https://api.giphy.com; img-src 'self' https://*.giphy.com; style-src 'self'; base-uri 'none'; form-action 'none'"
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src https://api.giphy.com https://jato.sediles.dev; img-src 'self' https://*.giphy.com; style-src 'self'; base-uri 'none'; form-action 'none'"
   }
 }

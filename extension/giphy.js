@@ -17,7 +17,7 @@
     try { const u = new URL(value); return u.protocol === 'https:' && !u.username && !u.password && !u.port && /(^|\.)giphy\.com$/.test(u.hostname); }
     catch { return false; }
   }
-  async function fetchByIds(apiKey, ids, fetcher = fetch, channel = 'tonela10') {
+  async function fetchByIds(apiKey, ids, fetcher = fetch) {
     try { ids = catalog.validate(ids); }
     catch (error) { throw new GiphyError('IDS', error.message); }
     if (!ids.length) return { items: [], missingIds: [] };
@@ -37,21 +37,17 @@
     }
     const returnedIds = payload.data.map(gif => gif.id);
     if (returnedIds.some(id => !ids.includes(id)) || new Set(returnedIds).size !== returnedIds.length) throw new GiphyError('SERVICE', 'GIPHY devolvió identificadores inesperados. Reintenta.');
-    // Allow the channel and the explicitly selected external GIF only.
+    // Only IDs from the validated catalogue request can reach this mapping.
     const items = payload.data.map(gif => {
       const username = gif.username || gif.user?.username || '';
-      const extra = catalog.extraGif(gif.id);
-      if (username.toLowerCase() !== (extra?.username || channel.toLowerCase())) {
-        throw new GiphyError('CHANNEL', 'La colección incluye un GIF de otro canal que no está permitido. Revisa los enlaces en Configuración.');
-      }
       const url = gif.images?.original?.url;
       const preview = gif.images?.fixed_width?.url || gif.images?.fixed_height?.url || url;
       if (!isMediaUrl(url) || !isMediaUrl(preview)) throw new GiphyError('SERVICE', 'GIPHY devolvió un GIF sin una URL válida. Reintenta.');
-      return { id: gif.id, title: gif.title || extra?.title || 'GIF de tonela10', url, preview, username };
+      return { id: gif.id, title: gif.title || 'GIF de GIPHY', url, preview, username };
     });
     return { items, missingIds: ids.filter(id => !returnedIds.includes(id)) };
   }
-  async function fetchPage(apiKey, offset = 0, fetcher = fetch, ids = catalog.DEFAULT_IDS) {
+  async function fetchPage(apiKey, offset, fetcher, ids) {
     try { ids = catalog.validate(ids); }
     catch (error) { throw new GiphyError('IDS', error.message); }
     if (!Number.isSafeInteger(offset) || offset < 0 || offset > ids.length) throw new GiphyError('OFFSET', 'No se pueden cargar más resultados.');

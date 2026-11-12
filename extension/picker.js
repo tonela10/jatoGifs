@@ -41,7 +41,7 @@ async function load() {
     if (!result?.ok) {
       const code = result?.error?.code;
       showError(result?.error?.message || 'No se pudo conectar. Cierra y vuelve a abrir el selector.');
-      configure.hidden = !['NOT_CONFIGURED', 'KEY', 'CHANNEL'].includes(code);
+      configure.hidden = !['NOT_CONFIGURED', 'KEY'].includes(code);
       retry.hidden = ['NOT_CONFIGURED', 'KEY', 'SESSION'].includes(code);
       more.hidden = true;
       return;
@@ -49,7 +49,7 @@ async function load() {
     for (const gif of result.items) {
       const button = document.createElement('button');
       button.className = 'gif'; button.type = 'button'; button.title = gif.title;
-      button.setAttribute('aria-label', `Insertar ${gif.title}, de @${gif.username}`);
+      button.setAttribute('aria-label', `Insertar ${gif.title}${gif.username ? `, de @${gif.username}` : ''}`);
       const img = document.createElement('img');
       img.src = gif.preview; img.alt = gif.title; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer';
       img.addEventListener('error', () => { img.hidden = true; button.classList.add('image-error'); });
@@ -61,8 +61,8 @@ async function load() {
     }
     offset = result.nextOffset; more.hidden = !result.hasMore;
     status.hidden = buttons.length > 0 && !result.missingIds?.length;
-    if (result.missingIds?.length) status.textContent = 'Algunos GIF guardados ya no están disponibles en GIPHY. Revisa tu colección en Configuración.';
-    else if (!buttons.length) status.textContent = 'Tu colección está vacía. Añade enlaces de GIF en Configuración.';
+    if (result.missingIds?.length) status.textContent = 'Algunos GIF del catálogo no están disponibles en GIPHY.';
+    else if (!buttons.length) status.textContent = 'El catálogo está vacío. Puedes gestionarlo desde Configuración.';
     configure.hidden = buttons.length > 0;
     mark(selectedIndex, document.activeElement.id === 'main');
   } catch { showError('No se pudo conectar con la extensión. Cierra y vuelve a escribir /gif.'); more.hidden = true; }

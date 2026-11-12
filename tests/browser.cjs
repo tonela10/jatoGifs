@@ -14,6 +14,8 @@ const executablePath = process.env.JATO_BROWSER || '/Applications/Brave Browser.
 const fixture = `<!doctype html><html lang="es" data-color-mode="light"><head><meta charset="utf-8"><title>Prueba aislada · jatoGifs</title><style>body{margin:50px auto;max-width:880px;padding:0 30px;background:#fff;color:#1f2328;font:15px/1.5 system-ui}textarea{box-sizing:border-box;width:100%;height:160px;padding:16px;font:15px/1.5 system-ui;border:1px solid #d1d9e0;border-radius:6px}h1{font-size:24px}label{display:block;margin:16px 0 8px}button{padding:10px;margin:8px 0}#mirror{white-space:pre-wrap}</style></head><body><h1>jatoGifs · prueba aislada</h1><p>Editor de prueba y GIF sintéticos. No se publica ningún comentario.</p><label for="comment_body">Comentario</label><textarea id="comment_body" name="comment[body]" placeholder="Escribe /gif"></textarea><div id="mirror"></div><label for="issue_body">Otro borrador</label><textarea id="issue_body" name="issue[body]">Otro borrador que debe conservarse.</textarea><label for="source_code">Editor de código excluido</label><div class="cm-editor"><textarea id="source_code" name="code"></textarea></div><button id="add">Abrir otro editor</button><script>document.addEventListener('input',e=>{if(e.target.id==='comment_body')document.getElementById('mirror').textContent=e.target.value});document.getElementById('add').onclick=()=>{const t=document.createElement('textarea');t.id='dynamic_comment_body';t.name='comment[body]';document.body.append(t)};</script></body></html>`;
 const gif = i => ({ id: String(i), title: `Prueba ${i} GIF`, username: 'tonela10', images: { original: { url: `https://media.giphy.com/jato-test-${i}/giphy.gif?cid=unchanged&rid=giphy.gif` }, fixed_width: { url: `https://media.giphy.com/jato-test-${i}/200w.gif?rid=200w.gif` } } });
 let state = 'success';
+let catalogIds = Array.from({length:27}, (_,i) => String(i+1));
+let catalogRequests = 0;
 let calls = [];
 let errors = [];
 
@@ -21,6 +23,10 @@ let errors = [];
   const context = await chromium.launchPersistentContext(profile, { executablePath, headless: true, viewport: { width: 1280, height: 1000 }, ignoreDefaultArgs: ['--disable-extensions'], args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`, '--disable-brave-update', '--no-first-run'] });
   try {
     await context.route('https://github.com/**', route => route.fulfill({ contentType: 'text/html', headers: { 'Content-Security-Policy': "frame-src 'self' https://viewscreen.githubusercontent.com; img-src 'self' data: https://*.githubusercontent.com" }, body: fixture }));
+    await context.route('https://jato.sediles.dev/api/catalog', route => {
+      catalogRequests++;
+      return route.fulfill({ json: { version:1, ids:catalogIds } });
+    });
     await context.route('https://api.giphy.com/**', async route => {
       const url = new URL(route.request().url()); const ids = url.searchParams.get('ids')?.split(',') || []; calls.push({ ids, q: url.searchParams.get('q'), path:url.pathname });
       if (state === 'offline') return route.abort('internetdisconnected');
@@ -39,13 +45,6 @@ let errors = [];
     await options.locator('#api-key').fill('synthetic-integration-key');
     await options.getByRole('button', { name: 'Guardar clave' }).click();
     await options.getByText('Clave guardada.', { exact: false }).waitFor();
-    await options.locator('#gif-entries').fill(Array.from({length:27},(_,i)=>String(i+1)).join('\n'));
-    await options.getByRole('button',{name:'Guardar colección',exact:true}).click();
-    await options.locator('#collection-result').filter({hasText:'Colección guardada: 27 GIF'}).waitFor();
-    // An invalid list must not replace the existing collection.
-    await options.locator('#gif-entries').fill('https://evil.test/gifs/one');
-    await options.getByRole('button',{name:'Guardar colección',exact:true}).click();
-    await options.locator('#collection-result').filter({hasText:'Línea 1'}).waitFor();
     const page = await context.newPage();
     page.on('pageerror', e => errors.push(e.message));
     await page.goto('https://github.com/jatogifs/test/issues/new');
@@ -82,10 +81,12 @@ let errors = [];
     await picker.locator('.gif').first().evaluate(el => { if (document.activeElement !== el) throw new Error('Tab must enter the gallery'); });
     await picker.locator('.gif').first().press('Tab');
     await picker.locator('#more').evaluate(el => { if (document.activeElement !== el) throw new Error('Tab must reach pagination'); });
+    const beforePagination = catalogRequests;
     await picker.getByRole('button', { name:'Cargar más', exact:true }).click();
     await picker.locator('.gif').nth(26).waitFor();
     assert.equal(await picker.locator('.gif').count(), 27);
     assert.deepEqual(calls.at(-1).ids, ['26','27']);
+    assert.equal(catalogRequests, beforePagination, 'pagination retains the open catalogue');
     await page.screenshot({ path:path.join(artifactDir, 'selector-light.png'), fullPage:true });
     await picker.locator('#more').press('Escape');
     await page.locator('#jatogifs-picker').waitFor({state:'detached'});
@@ -98,7 +99,7 @@ let errors = [];
     await page.locator('#jatogifs-picker').waitFor({state:'detached'});
     assert.equal(await editor.inputValue(), '/gif cambiado', 'changed drafts cancel the selection');
 
-    for (const [mode, text] of [['empty','ya no están disponibles'],['invalid-key','clave de GIPHY no es válida'],['rate','límite de GIPHY'],['offline','No se pudo conectar']]) {
+    for (const [mode, text] of [['empty','no están disponibles en GIPHY'],['invalid-key','clave de GIPHY no es válida'],['rate','límite de GIPHY'],['offline','No se pudo conectar']]) {
       state = mode; await open(); await picker.locator('#status').filter({ hasText:text }).waitFor();
       await editor.press('Escape'); await page.locator('#jatogifs-picker').waitFor({state:'detached'});
     }
@@ -118,10 +119,12 @@ let errors = [];
     assert.ok(bounds.x >= 0 && bounds.y >= 0 && bounds.x+bounds.width<=641 && bounds.y+bounds.height<=561, 'selector fits zoomed viewport');
     await page.screenshot({path:path.join(artifactDir,'selector-compact.png'),fullPage:true});
     await editor.press('Escape');
+    catalogIds = ['42'];
     await page.goto('https://github.com/jatogifs/test/pull/1');
     await open(); await picker.locator('.gif').first().waitFor();
     await picker.locator('.gif').first().click();
     assert.match(await editor.inputValue(),/^!\[/);
+    assert.deepEqual(calls.at(-1).ids, ['42'], 'reopening uses the changed remote catalogue');
     assert.ok(calls.every(c => c.q === null && c.path === '/v1/gifs' && c.ids.length <= 100));
     assert.deepEqual(errors, []);
     const report = { browser: executablePath, version:context.browser()?.version(), status:'passed', scenarios:['extension iframe + restrictive page CSP','keyboard insertion','native undo','middle insertion','other drafts preserved','keyboard focus and pagination','light/dark','draft cancellation','empty/401/429/offline','excluded code editor','dynamic editor','zoom','page navigation'], api:'mocked', github:'mocked', screenshots:artifactDir };
