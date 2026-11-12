@@ -24,10 +24,12 @@ Escribe `/gif` en un comentario de GitHub y elige un GIF sin salir del editor. j
 1. Descarga y descomprime [`jatoGifs-1.2.1.zip`](https://github.com/tonela10/jatoGifs/releases/download/v1.2.1/jatoGifs-1.2.1.zip).
 2. Abre `brave://extensions` o `chrome://extensions` y activa **Modo desarrollador**.
 3. Pulsa **Cargar descomprimida** y elige la carpeta que contiene `manifest.json`.
-4. En **Configuración → Conectar GIPHY**, guarda tu clave de aplicación de [GIPHY Developers](https://developers.giphy.com/) y pulsa **Comprobar GIF**.
+4. Entra con tu cuenta en el [panel de GIPHY Developers](https://developers.giphy.com/dashboard/), crea una clave de tipo **API** y pégala en **Configuración → Conectar GIPHY**. Pulsa **Guardar clave** y luego **Comprobar GIF**.
 5. Recarga las pestañas de GitHub que ya tenías abiertas.
 
-> La descarga requiere acceso al repositorio. El ZIP no incluye ninguna clave de GIPHY. Si ya tienes jatoGifs, puedes actualizar los archivos en su carpeta instalada y pulsar **Recargar** en el navegador.
+**Para compartirlo con otra persona:** pásale el ZIP o dale acceso a la release privada. Cada persona usa su propia clave de GIPHY, pero todas consultan el mismo catálogo de jatoGifs. La clave se guarda en su navegador y sirve para cargar los GIF del catálogo.
+
+> Si ya tienes jatoGifs, puedes actualizar los archivos en su carpeta instalada y pulsar **Recargar** en el navegador. El ZIP no incluye una clave de GIPHY.
 
 ## De `/gif` a tu borrador
 
