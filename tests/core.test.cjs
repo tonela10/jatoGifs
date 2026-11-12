@@ -1,7 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../extension/core.js');
-const gif = { title: 'Approved [GIF]', url: 'https://media.giphy.com/media/example/giphy.gif?cid=original&rid=giphy.gif&ct=g' };
+const gif = { title: 'Approved [GIF]', url: 'https://media.giphy.com/media/example/giphy.gif' };
 
 test('recognizes the exact command at the cursor and preserves its range', () => {
   for (const [value, caret, expected] of [['/gif', 4, 0], ['Antes /gif después', 10, 6], ['Hola\n/gif', 9, 5]]) {
@@ -28,8 +28,8 @@ test('refuses to overwrite a changed draft', () => {
   assert.equal(core.replacement({ value: '/gif', start: 0, end: 4 }, '/gif cambiado', gif), null);
   assert.equal(core.replacement({ value: 'text', start: 0, end: 4 }, 'text', gif), null);
 });
-test('escapes titles and preserves the exact API URL including query parameters', () => {
+test('escapes titles and only inserts canonical public GIF URLs', () => {
   assert.equal(core.markdown(gif), `![Approved \\[GIF\\]](<${gif.url}>)`);
   assert.ok(core.markdown({ title: 'one\ntwo', url: gif.url }).startsWith('![one two]'));
-  for (const url of ['javascript:alert(1)', 'https://giphy.com.evil.test/a.gif', 'http://media.giphy.com/a.gif', 'https://user@media.giphy.com/a.gif', 'https://media.giphy.com/a.gif>bad', 'https://media.giphy.com/a b.gif']) assert.throws(() => core.markdown({ url }));
+  for (const url of ['javascript:alert(1)', 'https://giphy.com.evil.test/a.gif', 'http://media.giphy.com/a.gif', 'https://user@media.giphy.com/a.gif', 'https://media.giphy.com/a.gif>bad', 'https://media.giphy.com/a b.gif', 'https://media.giphy.com/media/example/giphy.gif?token=x', 'https://media.giphy.com/media/example/200w.gif', 'https://i.giphy.com/media/example/giphy.gif']) assert.throws(() => core.markdown({ url }));
 });

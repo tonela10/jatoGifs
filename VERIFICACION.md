@@ -1,5 +1,27 @@
 # Verificación de jatoGifs
 
+## Versión 1.3.0 · 12 de noviembre de 2026
+
+- Pasan 21 pruebas automatizadas de la extensión y del Worker. El contrato del catálogo y el código del Worker no cambian.
+- En perfiles limpios de Brave 157.0.8103.39 y Chrome for Testing 157.0.8103.78, los nueve GIF reales cargaron sin clave. Se insertó un GIF y se mostró su imagen original en el editor de demostración. El renderizador de Markdown de GitHub también reconoció la imagen; no se publicó ningún comentario.
+- Las pruebas de integración cubren teclado, paginación, catálogo vacío, fallo de conexión, recuperación de miniatura, imagen no disponible y alta desde el formulario real del Worker con SQLite en memoria. Al volver a abrir el selector aparece el alta.
+- En ambos navegadores, la actualización descomprimida desde el ZIP 1.2.1 conservó la identidad y la antigua lista local, y eliminó únicamente la clave ficticia de prueba al pulsar Recargar.
+- Los dos paquetes excluyen el antiguo archivo de configuración; la extensión empaquetada no concede permiso ni hace peticiones a la API de GIPHY.
+- En un perfil limpio de Firefox 160.0 para macOS, el ZIP cargado como complemento temporal mostró los nueve GIF sin clave, insertó Markdown con ratón y teclado en un borrador local dentro de github.com y abrió la configuración. Firefox para Android no se ha probado.
+
+## Versión 1.2.1 · 12 de noviembre de 2026
+
+- Pasan 26 pruebas automatizadas. Se comprueban las altas en SQLite, duplicados, límites de solicitudes, el tope de 100 GIF y que solo el propietario puede quitar entradas.
+- En producción, Brave sin sesión abrió el formulario público por la URL antigua y la web rechazó un duplicado y un ID no verificable sin cambiar los nueve GIF. La ruta de administración redirige a Cloudflare Access.
+- Brave muestra la extensión instalada 1.2.1 habilitada. Su opción «Comprobar GIF» confirmó los nueve GIF de Cloudflare y GIPHY.
+
+## Versión 1.2.0 · 12 de noviembre de 2026
+
+- Pasan 23 pruebas automatizadas: la extensión, el Worker con SQLite en memoria y la verificación criptográfica de tokens de Cloudflare Access.
+- En Brave aislado, el selector conserva las páginas de la lista abierta y usa los cambios del catálogo en la siguiente apertura.
+- Con Cloudflare y GIPHY reales, Brave cargó nueve GIF e insertó uno como Markdown en un editor sintético. No se publicó ningún comentario.
+- En producción, el catálogo devuelve nueve IDs sin sesión, el panel redirige a Access y una solicitud de escritura sin sesión no modifica la base. El flujo de escritura con sesión se comprobó en la prueba local.
+
 ## Versión 1.1.1 · 11 de noviembre de 2026
 
 - 21 pruebas unitarias pasan. La colección inicial incluye el GIF `o5usW6VUC2TkUrC42m`; solo se acepta ese ID del usuario `perekng`.
@@ -60,3 +82,5 @@ El detector mecánico de calidad HTML/CSS no encontró incidencias. Un agente de
 ## Reproducibilidad
 
 `npm test` ejecuta las pruebas unitarias. `tests/browser.cjs` requiere una instalación disponible de Playwright; `JATO_BROWSER` permite elegir el ejecutable y `JATO_ARTIFACTS` el directorio para las evidencias. `scripts/check-channel.cjs` realiza una consulta real y no guarda la respuesta ni medios. `npm run package` genera los ZIP con el manifiesto en la raíz del paquete instalable.
+
+Para repetir la prueba de Firefox, indica las rutas de Firefox, GeckoDriver y el ZIP instalable en `JATO_FIREFOX`, `JATO_GECKODRIVER` y `JATO_ZIP`, y ejecuta `node tests/firefox.cjs`. La prueba usa un perfil temporal y requiere acceso a GitHub y al catálogo público.

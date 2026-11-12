@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  const ext = globalThis.browser ?? chrome;
   if (globalThis.__jatoGifsLoaded) return;
   globalThis.__jatoGifsLoaded = true;
   let active = null;
@@ -36,7 +37,7 @@
     for (const [name, value] of Object.entries(old.aria)) {
       if (value === null) old.editor.removeAttribute(name); else old.editor.setAttribute(name, value);
     }
-    chrome.runtime.sendMessage({ type: 'CLOSE', session: old.session }).catch(() => {});
+    ext.runtime.sendMessage({ type: 'CLOSE', session: old.session }).catch(() => {});
     if (restoreFocus && old.editor.isConnected) {
       old.editor.focus({ preventScroll: true });
       if (old.editor.value === old.snapshot.value) old.editor.setSelectionRange(old.snapshot.end, old.snapshot.end);
@@ -78,10 +79,10 @@
     active = { editor, frame, session, snapshot: { value: editor.value, ...command }, aria, href: location.href };
     position();
     try {
-      const response = await chrome.runtime.sendMessage({ type: 'OPEN', session });
+      const response = await ext.runtime.sendMessage({ type: 'OPEN', session });
       if (!active || active.session !== session) return;
       if (!response?.ok) throw new Error();
-      frame.src = `${chrome.runtime.getURL('picker.html')}#${new URLSearchParams({ session, theme: theme() })}`;
+      frame.src = `${ext.runtime.getURL('picker.html')}#${new URLSearchParams({ session, theme: theme() })}`;
       document.documentElement.append(frame);
       announce('jatoGifs abierto. Usa las flechas para elegir y Enter para insertar. Escape para cerrar.', false);
     } catch { if (active?.session === session) { close(); announce('No se pudo abrir jatoGifs. Recarga esta pestaña e inténtalo de nuevo.'); } }
@@ -123,7 +124,7 @@
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
 
-  chrome.runtime.onMessage.addListener(message => {
+  ext.runtime.onMessage.addListener(message => {
     if (!active || message.session !== active.session) return;
     if (message.type === 'DISMISS') { close(true); return; }
     if (message.type !== 'SELECT') return;
@@ -131,7 +132,7 @@
     const result = core.replacement(snapshot, editor.value, message.gif);
     if (!editor.isConnected || !result) { close(); announce('El borrador ha cambiado. Vuelve a escribir /gif para elegir de nuevo.'); return; }
     close(); editor.focus({ preventScroll: true }); editor.setSelectionRange(snapshot.start, snapshot.end);
-    // Chromium's native editing command preserves the editor undo stack and emits input.
+    // Native text insertion preserves the editor undo stack.
     let notified = false;
     const notice = () => { notified = true; };
     editor.addEventListener('input', notice, { once: true });

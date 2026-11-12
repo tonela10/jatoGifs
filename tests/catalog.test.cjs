@@ -1,20 +1,50 @@
-const {test}=require('node:test');
-const assert=require('node:assert/strict');
-const {DEFAULT_IDS,parse,validate}=require('../extension/catalog.js');
-test('includes the selected GIF in the default collection',()=>{
-  const id = parse('https://giphy.com/gifs/test-production-testing-o5usW6VUC2TkUrC42m')[0];
-  assert.equal(DEFAULT_IDS.length,9);
-  assert.ok(DEFAULT_IDS.includes(id));
-  assert.deepEqual(validate(DEFAULT_IDS),DEFAULT_IDS);
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const { URL, load, validate } = require('../extension/catalog.js');
+
+test('loads only the public catalogue, without credentials or caching', async () => {
+  const ids = await load(async (url, options) => {
+    assert.equal(url, URL);
+    assert.equal(options.credentials, 'omit');
+    assert.equal(options.cache, 'no-store');
+    assert.equal(options.referrerPolicy, 'no-referrer');
+    assert.equal(options.redirect, 'error');
+    return Response.json({ version: 1, ids: ['one', 'two'] });
+  });
+  assert.deepEqual(ids, ['one', 'two']);
 });
-test('accepts IDs, GIPHY page URLs and embed URLs, storing IDs only',()=>{
-  assert.deepEqual(parse('one\nhttps://giphy.com/gifs/title-two?utm_source=test\nhttps://www.giphy.com/embed/three\n\none'),['one','two','three']);
-  assert.deepEqual(parse(''),[]);
+
+test('accepts an intentionally empty catalogue and rejects malformed or unavailable responses', async () => {
+  assert.deepEqual(await load(async () => Response.json({ version: 1, ids: [] })), []);
+  for (const result of [
+    Response.json({ version: 2, ids: ['one'] }),
+    Response.json({ version: 1, ids: ['../unsafe'] }),
+    Response.json({ version: 1, ids: ['one', 'one'] }),
+    Response.json({ version: 1, ids: 'one' }),
+    new Response('<html>sign in</html>'),
+    new Response(null, { status: 503 }),
+  ]) await assert.rejects(load(async () => result), { code: 'CATALOG' });
+  await assert.rejects(load(async () => { throw new Error('offline'); }), { code: 'CATALOG' });
 });
-test('rejects foreign hosts, unsafe schemes and invalid paths with a useful line number',()=>{
-  for(const url of ['https://evil.test/gifs/one','http://giphy.com/gifs/one','https://giphy.com/channel/tonela10','https://giphy.com.evil.test/gifs/one','https://user@giphy.com/gifs/one','https://media.giphy.com/media/one/giphy.gif']) assert.throws(()=>parse(`valid\n${url}`),/Línea 2/);
+
+test('caps the catalogue at 100 IDs', () => {
+  assert.equal(validate(Array.from({length:100}, (_,i) => `id${i}`)).length,100);
+  assert.throws(() => validate(Array.from({length:101}, (_,i) => `id${i}`)), /100/);
 });
-test('enforces 100 distinct IDs, avoiding oversized API requests',()=>{
-  assert.equal(parse(Array.from({length:100},(_,i)=>`id${i}`).join('\n')).length,100);
-  assert.throws(()=>parse(Array.from({length:101},(_,i)=>`id${i}`).join('\n')),/100/);
+
+test('derives credential-free media URLs from validated IDs and paginates in order', () => {
+  const { media, page } = require('../extension/catalog.js');
+  assert.deepEqual(media('G123'), {
+    id:'G123',
+    preview:'https://media.giphy.com/media/G123/200w.gif',
+    url:'https://media.giphy.com/media/G123/giphy.gif',
+  });
+  for (const invalid of ['../one', 'one?key=a', 'one/two', '', 123]) assert.throws(() => media(invalid));
+  const ids = Array.from({length:26}, (_, i) => `g${i}`);
+  assert.deepEqual(page(ids, 0).items.map(item => item.id), ids.slice(0, 25));
+  assert.equal(page(ids, 0).nextOffset, 25);
+  assert.equal(page(ids, 0).hasMore, true);
+  assert.deepEqual(page(ids, 25), { items:[media('g25')], nextOffset:26, hasMore:false });
+  assert.deepEqual(page([], 0), { items:[], nextOffset:0, hasMore:false });
+  for (const offset of [-1, 0.5, 27, null]) assert.throws(() => page(ids, offset), {code:'OFFSET'});
 });

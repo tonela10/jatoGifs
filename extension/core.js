@@ -29,19 +29,13 @@
   }
 
   function safeMediaUrl(value) {
-    try {
-      const url = new URL(value);
-      return url.protocol === 'https:' && !url.username && !url.password &&
-        /(^|\.)giphy\.com$/.test(url.hostname) && url.port === '';
-    } catch { return false; }
+    return typeof value === 'string' && /^https:\/\/media\.giphy\.com\/media\/[A-Za-z0-9]{1,64}\/giphy\.gif$/.test(value);
   }
 
   function markdown(gif) {
     if (!gif || !safeMediaUrl(gif.url)) throw new Error('URL de GIF no válida.');
-    const title = String(gif.title || 'GIF de tonela10').replace(/[\r\n\t]+/g, ' ')
+    const title = String(gif.title || 'GIF de GIPHY').replace(/[\r\n\t]+/g, ' ')
       .slice(0, 180).replace(/[\\\[\]<>]/g, '\\$&');
-    // Angle brackets preserve query strings and parentheses without altering the API URL.
-    if (/[<>\s]/.test(gif.url)) throw new Error('URL de GIF no válida.');
     return `![${title}](<${gif.url}>)`;
   }
 
