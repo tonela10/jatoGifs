@@ -20,6 +20,16 @@ Si usas el código fuente, selecciona la subcarpeta **extension**, no la raíz d
 
 En Edge el acceso equivalente es `edge://extensions`. En otros Chromium, utiliza su página de extensiones y comprueba el resultado.
 
+## Instalar en Firefox
+
+Requiere Firefox 140 o posterior (Firefox para Android 142).
+
+1. Abre `about:debugging#/runtime/this-firefox`.
+2. Pulsa **Cargar complemento temporal…** y selecciona `manifest.json` dentro de la carpeta descomprimida (o de **extension** si usas el código fuente).
+3. Recarga las pestañas de GitHub que ya estuvieran abiertas.
+
+Los complementos temporales se eliminan al cerrar Firefox. Para una instalación permanente hay que firmar el ZIP en [addons.mozilla.org](https://addons.mozilla.org/developers/) (puede ser como distribución no listada).
+
 ## Usar el selector
 
 En el cuerpo de un issue, pull request, Discussion, comentario o revisión de GitHub, escribe `/gif` al principio o después de un espacio. Aparecerá la galería junto al editor.

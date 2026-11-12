@@ -4,6 +4,20 @@
   "version": "1.1.1",
   "description": "Escribe /gif en GitHub y elige un GIF de tu colección.",
   "minimum_chrome_version": "120",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "jatogifs@tonela10",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  },
   "permissions": [
     "storage"
   ],
@@ -11,13 +25,23 @@
     "https://api.giphy.com/*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "scripts": [
+      "config.js",
+      "catalog.js",
+      "giphy.js",
+      "core.js",
+      "background.js"
+    ]
   },
   "action": {
     "default_title": "Configurar jatoGifs",
     "default_popup": "options.html"
   },
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   "icons": {
     "16": "icons/16.png",
     "32": "icons/32.png",

@@ -1,8 +1,9 @@
 'use strict';
-importScripts('config.js', 'catalog.js', 'giphy.js', 'core.js');
+// Chrome runs this as a service worker; Firefox loads the same files as background scripts.
+if (typeof importScripts === 'function') importScripts('config.js', 'catalog.js', 'giphy.js', 'core.js');
 // Only the app key and user-selected GIF IDs are saved locally.
-chrome.storage.local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
-chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
+// Firefox has no setAccessLevel; its session storage is already limited to trusted contexts.
+for (const area of [chrome.storage.local, chrome.storage.session]) area.setAccessLevel?.({ accessLevel: 'TRUSTED_CONTEXTS' })?.catch?.(() => {});
 // Only routing metadata lives in session storage. It survives worker suspension,
 // but never contains GIFs, media URLs, keys or drafts and is cleared on close.
 const inFlight = new Set();
