@@ -11,10 +11,11 @@ const picker = { url:`chrome-extension://${id}/picker.html`, tab:{id:7}, frameId
 const selectedId = 'example';
 const gifUrl = 'https://media.giphy.com/media/example/giphy.gif';
 
-function startWorker(state = {}) {
+function startWorker(state = {}, firefox = false) {
   let listener; const sent = []; const calls = [];
+  const scheme = firefox ? 'moz-extension' : 'chrome-extension';
   const storage = {
-    setAccessLevel:async () => {},
+    ...(!firefox && {setAccessLevel:async () => {}}),
     get:async key => key === null ? {...state} : { [key]:state[key] },
     set:async entries => Object.assign(state,entries),
     remove:async key => {delete state[key];}
@@ -25,13 +26,21 @@ function startWorker(state = {}) {
     assert.equal(options.credentials, 'omit');
     return Response.json({version:1,ids:[selectedId]});
   }, self:{},
-    chrome:{ storage:{local:storage,session:storage}, runtime:{getURL:file=>`chrome-extension://${id}/${file}`,onMessage:{addListener:fn=>{listener=fn;}},openOptionsPage:async()=>{}}, tabs:{ sendMessage:async (tabId,message)=>{sent.push({tabId,message});},onRemoved:{addListener:()=>{}}} }
+    chrome:{ storage:{local:storage,session:storage}, runtime:{getURL:file=>`${scheme}://${id}/${file}`,onMessage:{addListener:fn=>{listener=fn;}},openOptionsPage:async()=>{}}, tabs:{ sendMessage:async (tabId,message)=>{sent.push({tabId,message});},onRemoved:{addListener:()=>{}}} }
   };
+  if (firefox) {
+    scope.browser = scope.chrome;
+    delete scope.chrome;
+  }
   const context = vm.createContext(scope);
-  scope.importScripts = (...names) => {
-    for (const name of names) vm.runInContext(fs.readFileSync(path.join(extension,name),'utf8'),context);
-  };
-  vm.runInContext(fs.readFileSync(path.join(extension,'background.js'),'utf8'),context);
+  const run = name => vm.runInContext(fs.readFileSync(path.join(extension,name),'utf8'),context);
+  if (firefox) {
+    const manifest = JSON.parse(fs.readFileSync(path.join(extension,'manifest.json'),'utf8'));
+    for (const name of manifest.background.scripts) run(name);
+  } else {
+    scope.importScripts = (...names) => names.forEach(run);
+    run('background.js');
+  }
   return { state, sent, calls, send: (message,sender) => new Promise(resolve=>{if(!listener(message,sender,resolve))resolve(undefined);}) };
 }
 
@@ -79,4 +88,16 @@ test('the update removes only the unused key; checking the catalogue does not lo
   assert.equal(result.ok,true);
   assert.equal(result.count,1);
   assert.equal(worker.calls.length,1);
+});
+
+test('the Firefox event page loads without importScripts or storage access-level setters', async () => {
+  const worker = startWorker({apiKey:'old-test-key'},true);
+  const firefoxPicker = {...picker,url:`moz-extension://${id}/picker.html`};
+  assert.equal(Object.hasOwn(worker.state,'apiKey'),false);
+  assert.equal((await worker.send({type:'OPEN',session},content)).ok,true);
+  const page = await worker.send({type:'PAGE',session,offset:0},firefoxPicker);
+  assert.equal(page.items[0].url,gifUrl);
+  assert.equal((await worker.send({type:'SELECT',session,id:selectedId},firefoxPicker)).ok,true);
+  const result = await worker.send({type:'CHECK'},{url:`moz-extension://${id}/options.html`});
+  assert.equal(result.count,1);
 });

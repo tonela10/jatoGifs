@@ -1,4 +1,5 @@
 'use strict';
+const ext = globalThis.browser ?? chrome;
 const parameters = new URLSearchParams(location.hash.slice(1));
 const session = parameters.get('session');
 document.documentElement.dataset.theme = parameters.get('theme') === 'dark' ? 'dark' : 'light';
@@ -12,7 +13,7 @@ let selecting = false;
 let selectedIndex = 0;
 let buttons = [];
 
-function send(type, data = {}) { return chrome.runtime.sendMessage({ type, session, ...data }); }
+function send(type, data = {}) { return ext.runtime.sendMessage({ type, session, ...data }); }
 function showError(message) { status.hidden = false; status.textContent = message; }
 async function select(gif) {
   if (selecting) return;

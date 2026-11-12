@@ -17,22 +17,34 @@ Escribe `/gif` en un comentario de GitHub y elige un GIF sin salir del editor. j
   <sub>Selector real de jatoGifs en un editor de demostración.</sub>
 </p>
 
-## Instala jatoGifs en Brave o Chrome
+## Instala jatoGifs en Brave, Chrome o Edge
+
+Requiere un navegador basado en Chromium 121 o posterior.
 
 1. Descarga el ZIP instalable de la [última release](https://github.com/tonela10/jatoGifs/releases/latest) y descomprímelo. Usa la 1.3.0 o posterior para instalar sin clave.
-2. Abre `brave://extensions` o `chrome://extensions` y activa **Modo desarrollador**.
+2. Abre `brave://extensions`, `chrome://extensions` o `edge://extensions` y activa **Modo desarrollador**.
 3. Pulsa **Cargar descomprimida** y elige la carpeta que contiene `manifest.json`.
 4. Recarga las pestañas de GitHub que ya tenías abiertas y escribe `/gif`.
 
 Si ya tienes jatoGifs, actualiza los archivos de la carpeta instalada, elimina el antiguo `config.js` si queda en esa carpeta y pulsa **Recargar**. La extensión borra la clave guardada en el navegador y conserva tu antigua lista local. La [1.2.1](https://github.com/tonela10/jatoGifs/releases/tag/v1.2.1) sigue requiriendo una clave.
 
-**Para compartirlo:** pasa el ZIP a la otra persona o dale acceso a la release del repositorio privado. Verá el mismo catálogo sin configurar GIPHY.
+**Para compartirlo:** envía el enlace a la release pública o comparte el ZIP. Verá el mismo catálogo sin configurar GIPHY.
 
 <p align="center">
   <img src="docs/capturas/configuracion.png" width="680" alt="Configuración de jatoGifs sin campos de credenciales, con Añadir GIF en la web y Comprobar catálogo">
   <br>
   <sub>Comprobar catálogo verifica la conexión y el número de entradas.</sub>
 </p>
+
+## Instala jatoGifs temporalmente en Firefox
+
+Requiere Firefox de escritorio 140 o posterior y el paquete 1.3.0 con soporte para Firefox.
+
+1. Descomprime el ZIP o localiza la carpeta `extension/` en el código fuente.
+2. Abre `about:debugging#/runtime/this-firefox`, pulsa **Cargar complemento temporal…** y selecciona `manifest.json`.
+3. Recarga las pestañas de GitHub y escribe `/gif`.
+
+El complemento temporal se quita al reiniciar Firefox. Para instalarlo de forma permanente en Firefox estable, se necesita un paquete [firmado por Mozilla](https://extensionworkshop.com/documentation/publish/signing-and-distribution-overview/). El ZIP de GitHub no está firmado.
 
 ## De `/gif` a tu borrador
 
